@@ -1,3 +1,5 @@
+# originally from https://github.com/fivethirtyeight/data/tree/master/trump-approval-ratings
+
 ---
 files:
   - https://projects.fivethirtyeight.com/trump-approval-data/approval_polllist.csv
