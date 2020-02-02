@@ -1,0 +1,46 @@
+---
+title: "Data 607 Week 1 Assignment"
+author: "Justin Hsi"
+date: "2/1/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Overview
+The article aggregates the approval/disapproval ratings of donald trump's presidency from various poll sources. The various polls are given weights and are also graded in terms of their historical accuracy. Finally, at the bottom of the article you can see similar plots for past presidents. Article at https://projects.fivethirtyeight.com/trump-approval-ratings/
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+# data originally from https://github.com/fivethirtyeight/data/tree/master/trump-approval-ratings
+# data uploaded at https://github.com/jmhsi/trump-approval-ratings
+```
+
+```{r}
+approve_pollist = read.csv(file = 'approval_polllist.csv')
+head(approve_pollist)
+approve_pollist$modeldate = as.Date(approve_pollist$modeldate, format='%m/%d/%Y')
+approve_pollist$startdate = as.Date(approve_pollist$startdate, format='%m/%d/%Y')
+approve_pollist$enddate = as.Date(approve_pollist$enddate, format='%m/%d/%Y')
+recent_polls = subset(approve_pollist, startdate > as.Date("2019-1-1"), select=c(subgroup, modeldate, startdate, enddate, pollster, grade, samplesize, population, weight, approve, disapprove, adjusted_approve, adjusted_disapprove))
+recent_polls = recent_polls %>%
+  rename(
+    polled_population = population
+  )
+recent_polls$polled_population = recode_factor(recent_polls$polled_population, a = "all adults", rv = 'registered voters', v='voters', lv='likely voters')
+head(recent_polls)
+```
+
+```{r}
+summary(recent_polls)
+```
+
+```{r}
+barplot(table(recent_polls$polled_population), main = "Polls by Sampled Population")
+```
+
+# Findings and Recommendations
+The analysis was on Trump's approval ratings across the various polling populations, but you could use this data to try and get a sense of the next presidential election results. If you assume that approval of Trump correlates to voting for Trump, then you might redo this analysis of only likely voters or registered voters and see how his approval rating stands. You could monitor this up until the next presidential election and it may give you a sense of sentiment on Trump being President for another term.
